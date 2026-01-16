@@ -50,9 +50,10 @@ export default function LoginPage() {
       
       console.log('Redirecting to:', redirectUrl);
       
-      // 使用 window.location 确保跳转成功
-      window.location.href = redirectUrl;
+      // 使用 replace 而不是 href，避免历史记录问题
+      window.location.replace(redirectUrl);
     } catch (err) {
+      console.error('Login error:', err);
       setError('网络错误，请稍后重试');
       setLoading(false);
     }
