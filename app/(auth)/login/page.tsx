@@ -40,7 +40,15 @@ export default function LoginPage() {
       login(data.token, data.user);
 
       // 跳转到对话页面
-      router.push('/chat');
+      // 根据用户角色跳转到不同页面
+      if (data.user.role === 'admin') {
+        router.push('/admin/models');
+      } else {
+        router.push('/chat');
+      }
+      
+      // 强制刷新以确保状态更新
+      router.refresh();
     } catch (err) {
       setError('网络错误，请稍后重试');
       setLoading(false);
