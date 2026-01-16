@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import { useAuthStore } from '@/stores/auth-store';
 
 interface ModelConfig {
   id: string;
@@ -17,7 +18,7 @@ interface ModelConfig {
 
 export default function AdminModelsPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user: authUser, token, isAuthenticated } = useAuthStore();
   const [models, setModels] = useState<ModelConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -32,27 +33,21 @@ export default function AdminModelsPage() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (!token || !userData) {
+    if (!isAuthenticated || !token || !authUser) {
       router.push('/login');
       return;
     }
 
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
+    if (authUser.role !== 'admin') {
       router.push('/chat');
       return;
     }
 
-    setUser(parsedUser);
     loadModels();
-  }, [router]);
+  }, [router, isAuthenticated, token, authUser]);
 
   const loadModels = async () => {
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch('/api/admin/models', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -73,7 +68,6 @@ export default function AdminModelsPage() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
       const url = editingModel
         ? `/api/admin/models/${editingModel.id}`
         : '/api/admin/models';
@@ -128,7 +122,6 @@ export default function AdminModelsPage() {
     if (!confirm('确定要删除这个模型配置吗？')) return;
 
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`/api/admin/models/${id}`, {
         method: 'DELETE',
         headers: {
@@ -151,7 +144,6 @@ export default function AdminModelsPage() {
 
   const handleToggleEnabled = async (id: string, isEnabled: boolean) => {
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`/api/admin/models/${id}`, {
         method: 'PUT',
         headers: {
@@ -175,7 +167,6 @@ export default function AdminModelsPage() {
 
   const handleTest = async (id: string) => {
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`/api/admin/models/${id}/test`, {
         method: 'POST',
         headers: {
@@ -195,7 +186,7 @@ export default function AdminModelsPage() {
     }
   };
 
-  if (!user) {
+  if (!authUser) {
     return <div>加载中...</div>;
   }
 
