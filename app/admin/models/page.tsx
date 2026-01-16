@@ -32,9 +32,9 @@ export default function AdminModelsPage() {
     isMultimodal: false,
   });
 
-  // 使用独立的 localStorage 键来获取 token（兼容性）
-  const token = authToken || localStorage.getItem('token');
-  const user = authUser || (localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null);
+  // 使用独立的 localStorage 键来获取 token（兼容性）- 只在客户端执行
+  const token = authToken || (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+  const user = authUser || (typeof window !== 'undefined' && localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null);
 
   useEffect(() => {
     // 检查认证状态
