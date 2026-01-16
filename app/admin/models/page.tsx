@@ -78,13 +78,24 @@ export default function AdminModelsPage() {
         : '/api/admin/models';
       const method = editingModel ? 'PUT' : 'POST';
 
+      // 转换字段名以匹配 API 期望的格式
+      const payload = {
+        name: formData.displayName,
+        provider: formData.provider,
+        apiKey: formData.apiKey,
+        baseUrl: formData.apiEndpoint || undefined,
+        modelName: formData.modelName,
+        isMultimodal: formData.isMultimodal,
+        enabled: true,
+      };
+
       const res = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
