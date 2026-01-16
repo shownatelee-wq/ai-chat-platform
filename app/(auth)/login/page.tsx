@@ -29,6 +29,8 @@ export default function LoginPage() {
       });
 
       const data = await response.json();
+      
+      console.log('Login response:', data);
 
       if (!response.ok || !data.success) {
         setError(data.error?.message || '登录失败');
@@ -36,11 +38,17 @@ export default function LoginPage() {
         return;
       }
 
+      console.log('Login successful, saving token...');
+      
       // 保存token和用户信息
       login(data.token, data.user);
+      
+      console.log('Token saved, preparing redirect...');
 
       // 跳转到对应页面
       const redirectUrl = data.user.role === 'admin' ? '/admin/models' : '/chat';
+      
+      console.log('Redirecting to:', redirectUrl);
       
       // 使用 window.location 确保跳转成功
       window.location.href = redirectUrl;
