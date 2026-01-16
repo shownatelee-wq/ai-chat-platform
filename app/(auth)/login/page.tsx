@@ -39,16 +39,11 @@ export default function LoginPage() {
       // 保存token和用户信息
       login(data.token, data.user);
 
-      // 跳转到对话页面
-      // 根据用户角色跳转到不同页面
-      if (data.user.role === 'admin') {
-        router.push('/admin/models');
-      } else {
-        router.push('/chat');
-      }
+      // 跳转到对应页面
+      const redirectUrl = data.user.role === 'admin' ? '/admin/models' : '/chat';
       
-      // 强制刷新以确保状态更新
-      router.refresh();
+      // 使用 window.location 确保跳转成功
+      window.location.href = redirectUrl;
     } catch (err) {
       setError('网络错误，请稍后重试');
       setLoading(false);
