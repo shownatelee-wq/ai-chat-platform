@@ -18,7 +18,7 @@ interface ModelConfig {
 
 export default function AdminModelsPage() {
   const router = useRouter();
-  const { user: authUser, token, isAuthenticated } = useAuthStore();
+  const { user: authUser, token: authToken, isAuthenticated } = useAuthStore();
   const [models, setModels] = useState<ModelConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -32,19 +32,24 @@ export default function AdminModelsPage() {
     isMultimodal: false,
   });
 
+  // 使用独立的 localStorage 键来获取 token（兼容性）
+  const token = authToken || localStorage.getItem('token');
+  const user = authUser || (localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null);
+
   useEffect(() => {
-    if (!isAuthenticated || !token || !authUser) {
+    // 检查认证状态
+    if (!token || !user) {
       router.push('/login');
       return;
     }
 
-    if (authUser.role !== 'admin') {
+    if (user.role !== 'admin') {
       router.push('/chat');
       return;
     }
 
     loadModels();
-  }, [router, isAuthenticated, token, authUser]);
+  }, [router, token, user]);
 
   const loadModels = async () => {
     try {
@@ -186,13 +191,13 @@ export default function AdminModelsPage() {
     }
   };
 
-  if (!authUser) {
+  if (!user) {
     return <div>加载中...</div>;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Navbar user={authUser} />
+      <Navbar user={user} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
