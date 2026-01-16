@@ -40,8 +40,12 @@ export default function LoginPage() {
 
       console.log('Login successful, saving token...');
       
-      // 保存token和用户信息
+      // 保存token和用户信息到 auth store
       login(data.token, data.user);
+      
+      // 同时保存到独立的 localStorage 键（兼容现有页面）
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       
       console.log('Token saved, preparing redirect...');
 
