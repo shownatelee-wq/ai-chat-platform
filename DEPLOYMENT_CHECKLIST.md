@@ -94,7 +94,7 @@ git commit -m "Initial commit: AI Chat Platform"
 
 ### 3.3 推送代码
 ```bash
-git remote add origin https://github.com/你的用户名/ai-chat-platform.git
+git remote add origin https://github.com/shownatelee-wq/ai-chat-platform.git
 git branch -M main
 git push -u origin main
 ```
